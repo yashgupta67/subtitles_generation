@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Player</title>
+</head>
+<body>
+    <h1>Video Player</h1>
+    <video width="640" height="480" controls>
+        <source src="{{ url_for('send_video', filename=filename) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="subtitles">
+        <script>
+            var subtitles = JSON.parse('{{ subtitles | tojson | safe }}');
+            var video = document.querySelector('video');
+            var subtitleDiv = document.getElementById('subtitles');
+
+            video.ontimeupdate = function() {
+                var currentTime = video.currentTime;
+                subtitleDiv.innerHTML = '';
+                subtitles.forEach(function(subtitle) {
+                    if (currentTime >= subtitle.start && currentTime <= subtitle.end) {
+                        var subtitleText = document.createElement('p');
+                        subtitleText.textContent = subtitle.text;
+                        subtitleDiv.appendChild(subtitleText);
+                    }
+                });
+            };
+        </script>
+    </div>
+</body>
+</html>
